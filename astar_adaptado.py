@@ -57,14 +57,18 @@ def a_star(graph, start, end):
 
 def heuristic(node, end):
     """
-    Função heurística simples. Neste caso, retorna 0 para que o A* funcione como Dijkstra.
+    Função heurística simples. 
     Args:
         node (str): O nó atual.
         end (str): O nó de destino.
     Returns:
-        int: O valor heurístico (neste caso, sempre 0).
+        int: O valor heurístico baseado no número de arestas para o destino.
     """
-    return 0  # Pode ser substituído por uma heurística real
+    # Heurística simples com base em quantos "saltos" do nó atual até o final
+    heuristic_values = {
+        'A': 4, 'B': 3, 'C': 2, 'D': 1, 'E': 2, 'F': 3, 'G': 1, 'H': 0
+    }
+    return heuristic_values[node]
 
 def reconstruct_path(came_from, end):
     """
@@ -86,7 +90,7 @@ def reconstruct_path(came_from, end):
 
 # Uso grafo (8)
 if __name__ == "__main__":
-    # Definição do grafo como um dicionário de listas de adjacência
+
     graph = {
         'A': [('B', 5), ('F', 3)],
         'B': [('A', 5), ('C', 2), ('G', 3)],
@@ -98,11 +102,10 @@ if __name__ == "__main__":
         'H': [('G', 2), ('E', 5), ('C', 10)],
     }
 
-    # Definir nó inicial e nó objetivo
     start = 'A'
     end = 'H'
 
-    # Executar o algoritmo A*
+    # Executar o algoritmo A* com heurística
     path, cost = a_star(graph, start, end)
 
     # Exibir os resultados

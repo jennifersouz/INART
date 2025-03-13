@@ -1,5 +1,4 @@
 from tabulate import tabulate
-
 import csv
 
 def csv_para_matriz_adjacencia(nome_arquivo):
@@ -34,7 +33,7 @@ def csv_para_matriz_adjacencia(nome_arquivo):
     # Converte o conjunto de nós para uma lista ordenada
     nos = sorted(nos)
 
-    # Inicializa a matriz de adjacência com None
+    # Inicializa a matriz de adjacência com None (ou "Sem conexão")
     matriz_adjacencia = [[None for _ in range(len(nos))] for _ in range(len(nos))]
 
     # Preenche a matriz de adjacência com os custos das arestas
@@ -45,6 +44,7 @@ def csv_para_matriz_adjacencia(nome_arquivo):
             matriz_adjacencia[i][j] = (distancia, combustivel, tempo)
 
     return nos, matriz_adjacencia
+
 # Exemplo de uso
 nos, matriz_adjacencia = csv_para_matriz_adjacencia('grafo.csv')
 
@@ -54,7 +54,7 @@ for i, linha in enumerate(matriz_adjacencia):
     linha_tabela = [nos[i]]  # Adiciona o nó de origem na primeira coluna
     for custo in linha:
         if custo is None:
-            linha_tabela.append("None")
+            linha_tabela.append("Sem conexão")
         else:
             distancia, combustivel, tempo = custo
             linha_tabela.append(f"{distancia} km, {combustivel} L, {tempo} min")
