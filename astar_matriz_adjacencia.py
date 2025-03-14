@@ -32,8 +32,8 @@ def csv_para_matriz_adjacencia(nome_arquivo):
     # Converte o conjunto de nós para uma lista ordenada
     nos = sorted(nos)
 
-    # Inicializa a matriz de adjacência com float('inf') para indicar a ausência de aresta
-    matriz_adjacencia = [[float('inf') for _ in range(len(nos))] for _ in range(len(nos))]
+    # Inicializa a matriz de adjacência com None para indicar a ausência de aresta
+    matriz_adjacencia = [[None for _ in range(len(nos))] for _ in range(len(nos))]
 
     # Preenche a matriz de adjacência com os custos das arestas (somando distância, combustível e tempo)
     for origem in grafo:
@@ -42,7 +42,12 @@ def csv_para_matriz_adjacencia(nome_arquivo):
             j = nos.index(destino)  # Índice do nó de destino
             matriz_adjacencia[i][j] = distancia + combustivel + tempo  # Soma os três custos
 
-    return nos, matriz_adjacencia
+    # Adiciona a coluna e a linha com os nós
+    matriz_adjacencia_com_nos = [[''] + nos]  # Primeira linha com os nós
+    for i in range(len(nos)):
+        matriz_adjacencia_com_nos.append([nos[i]] + matriz_adjacencia[i])  # Adiciona cada nó à primeira coluna
+
+    return nos, matriz_adjacencia_com_nos
 
 # Exemplo de uso
 if __name__ == "__main__":
@@ -55,7 +60,12 @@ if __name__ == "__main__":
     # Exibe a lista de nós
     print("Nós:", nos)
 
-    # Exibe a matriz de adjacência
+    # Exibe a matriz de adjacência com a coluna e linha de nós
     print("Matriz de adjacência:")
+    
+    # Define um tamanho fixo para a largura das colunas
+    largura = max(len(str(x)) for row in matriz_adjacencia for x in row) + 2  # Adiciona um espaço extra para o alinhamento
+    
     for linha in matriz_adjacencia:
-        print(linha)
+        # Alinha os valores para ficarem uniformes
+        print("".join(f"{str(valor):<{largura}}" for valor in linha))
