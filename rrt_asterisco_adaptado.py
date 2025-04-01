@@ -18,7 +18,7 @@ class Node:
         self.children = []
 
 def load_csv(filename):
-    """Carrega os dados do arquivo CSV"""
+    """Carrega os dados do arquivo CSV e define obstáculos de forma mais eficiente"""
     nodes = {}
     obstacles = []
     
@@ -30,7 +30,7 @@ def load_csv(filename):
         with open(filename, newline='', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                if len(row) < 5:  # Verifica se tem pelo menos 5 colunas
+                if len(row) < 5:
                     continue
                 
                 origem, destino, x, y, raio = row[:5]
@@ -44,27 +44,41 @@ def load_csv(filename):
                 if destino not in nodes:
                     nodes[destino] = (x, y)
                 
-                if len(obstacles) < 3:  # Mantém apenas 3 obstáculos
-                    raio = min(max(raio, 1.0), 5.0)  # Define um tamanho aceitável para os obstáculos
-                    
-                    # Impede que os obstáculos fiquem sobre o início ou objetivo
-                    inicio = list(nodes.values())[0] if nodes else None
-                    objetivo = list(nodes.values())[-1] if nodes else None
-                    
-                    if inicio and math.hypot(x - inicio[0], y - inicio[1]) < raio + 2:
-                        continue
-                    if objetivo and math.hypot(x - objetivo[0], y - objetivo[1]) < raio + 2:
-                        continue
-                    
-                    # Impede sobreposição de obstáculos
-                    if not any(math.hypot(x - ox, y - oy) < (r + raio + 2) for ox, oy, r in obstacles):
-                        obstacles.append((x, y, raio))
+        # Gerar obstáculos aleatórios no espaço, evitando sobreposição
+        num_obstacles = 5  # Ajuste conforme necessário
+        min_radius, max_radius = 3.0, 8.0
+        margin = 5.0
+        
+        x_values = [coord[0] for coord in nodes.values()]
+        y_values = [coord[1] for coord in nodes.values()]
+        
+        x_min, x_max = min(x_values) - 20, max(x_values) + 20
+        y_min, y_max = min(y_values) - 20, max(y_values) + 20
+        
+        while len(obstacles) < num_obstacles:
+            obs_x = random.uniform(x_min, x_max)
+            obs_y = random.uniform(y_min, y_max)
+            obs_radius = random.uniform(min_radius, max_radius)
+            
+            # Garantir que os obstáculos não bloqueiam o início ou objetivo
+            inicio = list(nodes.values())[0] if nodes else None
+            objetivo = list(nodes.values())[-1] if nodes else None
+            
+            if inicio and math.hypot(obs_x - inicio[0], obs_y - inicio[1]) < obs_radius + margin:
+                continue
+            if objetivo and math.hypot(obs_x - objetivo[0], obs_y - objetivo[1]) < obs_radius + margin:
+                continue
+            
+            # Evitar sobreposição de obstáculos
+            if not any(math.hypot(obs_x - ox, obs_y - oy) < (r + obs_radius + margin) for ox, oy, r in obstacles):
+                obstacles.append((obs_x, obs_y, obs_radius))
                 
         return nodes, obstacles
     
     except Exception as e:
         print(f"Erro ao ler o arquivo CSV: {e}")
         return None, None
+
 
 
 def distance(node1, node2):
