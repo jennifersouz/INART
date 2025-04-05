@@ -1,3 +1,4 @@
+#https://stackabuse.com/basic-ai-concepts-a-search-algorithm/
 import networkx as nx
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
@@ -39,8 +40,7 @@ def a_star(graph, start, end):
     return [], float('inf')
 
 def heuristic(node, end):
-    """Função heurística simplificada."""
-    return 1  # Aqui poderia ser melhorado, mas deixamos neutro para funcionar com qualquer grafo
+    return 1  
 
 def reconstruct_path(came_from, end):
     """Reconstrói o caminho encontrado."""

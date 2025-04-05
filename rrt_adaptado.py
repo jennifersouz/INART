@@ -123,7 +123,7 @@ def desenhar_grafo_3d(grafo, path=None):
 
 
 def main():
-    nome_arquivo = 'grafo_grande.csv'
+    nome_arquivo = 'cidades.csv'
     criterio = input("Escolha o critério de custo (distancia/combustivel/portagem): ").strip().lower()
 
     try:
