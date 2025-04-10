@@ -1,3 +1,4 @@
+#https://github.com/zhm-real/PathPlanning/blob/master/Sampling_based_Planning/rrt_2D/rrt_star.py
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -67,7 +68,7 @@ def steer(from_node, to_node, step_size):
         scale = step_size / dist
         return Node(from_node.x + dx * scale, from_node.y + dy * scale, from_node.z + dz * scale)
 
-def rrt_star(start_coords, goal_coords, max_iter=5000, step_size=3.0, goal_sample_rate=0.2):
+def rrt_star(start_coords, goal_coords, max_iter=500, step_size=1.0, goal_sample_rate=0.2):
     start_time = time.time()
     start_node = Node(*start_coords, name="Start")
     start_node.cost = 0
@@ -75,6 +76,7 @@ def rrt_star(start_coords, goal_coords, max_iter=5000, step_size=3.0, goal_sampl
 
     tree = [start_node]
     explored_nodes = []
+    last_improvement = 0
 
     x_range = (min(start_coords[0], goal_coords[0])-50, max(start_coords[0], goal_coords[0])+50)
     y_range = (min(start_coords[1], goal_coords[1])-50, max(start_coords[1], goal_coords[1])+50)
@@ -146,8 +148,10 @@ def rrt_star(start_coords, goal_coords, max_iter=5000, step_size=3.0, goal_sampl
                 goal_node.cost = potential_goal_cost
                 best_goal_node = goal_node
                 best_goal_cost = potential_goal_cost
-                if iteration > max_iter * 0.8 and len(tree) > 1000:
-                    break
+                last_improvement = iteration
+
+            if (iteration - last_improvement) > 500 and best_goal_node:
+                break
 
     if best_goal_node:
         path = []
@@ -162,7 +166,8 @@ def rrt_star(start_coords, goal_coords, max_iter=5000, step_size=3.0, goal_sampl
         # Estatísticas detalhadas
         peso_x = 2.0
         peso_y = 1.0
-        peso_z = 1.5
+        peso_z = 1.0
+
         delta_x = delta_y = delta_z = total_length = 0.0
 
         for i in range(1, len(path)):
@@ -215,8 +220,9 @@ def plot_result(tree, path, explored_nodes, start, goal, start_name, goal_name):
     ax.scatter(goal[0], goal[1], color='blue', edgecolors='black', s=120, marker='X', zorder=5, label='Objetivo')
 
     # 5. Rótulos dos pontos com leve deslocamento
-    ax.text(start[0] + 5, start[1] + 5, start_name, fontsize=12, color='green', weight='bold')
-    ax.text(goal[0] + 5, goal[1] + 5, goal_name, fontsize=12, color='blue', weight='bold')
+    ax.text(start[0], start[1]+2, start_name, fontsize=12, color='green', weight='bold', ha='center', va='bottom')
+    ax.text(goal[0], goal[1]+2, goal_name, fontsize=12, color='blue', weight='bold', ha='center', va='bottom')
+
 
     # 6. Estética geral
     ax.set_title("Resultado do RRT*", fontsize=14, weight='bold')

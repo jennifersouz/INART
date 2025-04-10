@@ -2,9 +2,10 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
+import time
 
+start_time =time.time()
 def a_star(graph, start, end):
-    """Executa o algoritmo A* para encontrar o caminho mais curto."""
     if start not in graph or end not in graph:
         return [], float('inf')
 
@@ -106,3 +107,7 @@ else:
 
     # Exibir o grafo
     desenhar_grafo(graph, path)
+
+    end_time=time.time()
+    execution_time = end_time - start_time
+    print(f"Tempo de execução: {execution_time: .4f} segundos")
